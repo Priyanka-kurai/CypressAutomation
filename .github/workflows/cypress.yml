@@ -7,19 +7,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2] # Run tests in 2 parallel instances
+        containers: [1, 2]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci   # or "npm install" if you don't use package-lock.json
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          # Boot your app before running Cypress
           start: npm start
           wait-on: 'http://localhost:3000'
-          record: true         # ✅ record results to Cypress Cloud
-          parallel: true       # ✅ enable parallelization across matrix
+          record: true
+          parallel: true
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}   # ✅ from GitHub secrets
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}               # ✅ auto-provided by GitHub
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
