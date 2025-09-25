@@ -1,5 +1,5 @@
 import { createMachine, assign } from "xstate"
-import { ProgressContext } from "common"
+import { ProgressContext } from "../lib/types"   // ✅ fixed import
 import { concat } from "lodash/fp"
 import {
   getCourse,

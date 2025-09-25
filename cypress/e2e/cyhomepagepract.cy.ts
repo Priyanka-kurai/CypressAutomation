@@ -5,7 +5,7 @@ describe('HomePage', () => {
   })
 it('login credentials', () => {
    cy.visit('https://wallet.truscholar.io/signin')
-    cy.viewport(1366, 968);
+    //cy.viewport(1366, 968);
   cy.get('#email',{ timeout: 10000 }).type('starishita9900@gmail.com');
     cy.get('input[name=password]').type('Sushil@23');
     cy.get('button[type=submit]').click();
@@ -134,3 +134,4 @@ cy.contains('button', 'Generate with AI', { timeout: 10000 })
 })
  
 })
+export {}
