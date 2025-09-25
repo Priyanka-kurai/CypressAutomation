@@ -1,13 +1,12 @@
 import { defineConfig } from "cypress";
 
 export default defineConfig({
-   
   e2e: {
-   
-    // defaultCommandTimeout: 20000, 
+    projectId: "s4itd8",   // ✅ must be inside e2e, not inside setupNodeEvents
     setupNodeEvents(on, config) {
       // implement node event listeners here
-       projectId: "s4itd8"
+      return config;
     },
   },
 });
+
