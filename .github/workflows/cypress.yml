@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2]
+        containers: [1, 2] # Run tests in 2 parallel instances
 
     steps:
       - name: Checkout
@@ -19,12 +19,13 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm ci   # or "npm install" if you don't use package-lock.json
+        run: npm ci   # or npm install
 
-      - name: Cypress run
+      - name: Cypress run on Chrome
         uses: cypress-io/github-action@v6
         with:
-          start: npm start
+          browser: chrome       # ✅ Run Cypress tests in Chrome
+          start: npm start      # if you need your app running
           wait-on: 'http://localhost:3000'
           record: true
           parallel: true
