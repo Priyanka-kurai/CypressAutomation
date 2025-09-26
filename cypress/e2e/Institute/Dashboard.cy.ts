@@ -11,55 +11,48 @@ describe('Dashboard Cards Display', () => {
     cy.url({ timeout: 10000 }).should('include', '/dashboard');
   });
 
-  const dashboardCards = [
-    'Certificates Issued',
-    'Badges Issued',
-    'Marksheets Issued',
-    'Program',
-    'Courses',
-    'Learners',
-  ];
+  it('View all dashboard highlights', () => {
+    const dashboardCards = [
+      'Certificates Issued',
+      'Badges Issued',
+      'Marksheets Issued',
+      'Program',
+      'Courses',
+      'Learners',
+    ];
 
-  // ✅ Generate tests for each dashboard card
-  dashboardCards.forEach(label => {
-    it(`View ${label} card`, () => {
+    // Loop through cards inside SAME test
+    dashboardCards.forEach(label => {
       cy.contains(new RegExp(label, 'i'), { timeout: 15000 })
         .invoke('text')
         .then((text) => {
           cy.log(`Found: ${text}`);
         });
     });
-  });
 
-  it('Scroll to Learners Joined section', () => {
+    // Scroll and verify sections inside SAME test
+    cy.scrollTo('bottom', { duration: 2000 });
+
     cy.contains('h6', 'Learners Joined', { timeout: 15000 })
       .scrollIntoView()
       .should('be.visible');
     cy.log('Learners Joined section is visible');
-  });
 
-  it('Scroll to Resume Created by Learners section', () => {
     cy.contains('h6', 'Resume Created by Learners', { timeout: 15000 })
       .scrollIntoView()
       .should('be.visible');
     cy.log('Resume Created by Learners section is visible');
-  });
 
-  it('Scroll to No of Verification section', () => {
     cy.contains('h6', 'No of Verification', { timeout: 15000 })
       .scrollIntoView()
       .should('be.visible');
     cy.log('No of Verification section is visible');
-  });
 
-  it('Scroll to Wallet Access section', () => {
     cy.contains('h6', 'Wallet Access', { timeout: 15000 })
       .scrollIntoView()
       .should('be.visible');
     cy.log('Wallet Access section is visible');
-  });
 
-  it('Scroll to Access Report section', () => {
     cy.contains('h6', 'Access Report', { timeout: 15000 })
       .scrollIntoView()
       .should('be.visible');
@@ -67,5 +60,4 @@ describe('Dashboard Cards Display', () => {
   });
 });
 
-// Needed only for TypeScript to avoid "Cannot redeclare block-scoped variable" errors
 export {};
