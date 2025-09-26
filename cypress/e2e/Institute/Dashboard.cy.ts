@@ -11,28 +11,27 @@ describe('Dashboard Cards Display', () => {
     cy.url({ timeout: 10000 }).should('include', '/dashboard');
   });
 
-  it('View all dashboard highlights', () => {
-    const dashboardCards = [
-      'Certificates Issued',
-      'Badges Issued',
-      'Marksheets Issued',
-      'Program',
-      'Courses',
-      'Learners',
-    ];
+  const dashboardCards = [
+    'Certificates Issued',
+    'Badges Issued',
+    'Marksheets Issued',
+    'Program',
+    'Courses',
+    'Learners',
+  ];
 
-    // Just print each card label in Cypress runner/log
-   dashboardCards.forEach(label => {
-  it(`View ${label} card`, () => {
-    cy.contains(new RegExp(label, 'i'), { timeout: 15000 })
-      .invoke('text')
-      .then((text) => {
-        cy.log(`Found: ${text}`);
-      });
+  // ✅ Generate tests for each dashboard card
+  dashboardCards.forEach(label => {
+    it(`View ${label} card`, () => {
+      cy.contains(new RegExp(label, 'i'), { timeout: 15000 })
+        .invoke('text')
+        .then((text) => {
+          cy.log(`Found: ${text}`);
+        });
+    });
   });
-});
-    cy.scrollTo('bottom', { duration: 2000 }); //
-     it('Scroll to Learners Joined section', () => {
+
+  it('Scroll to Learners Joined section', () => {
     cy.contains('h6', 'Learners Joined', { timeout: 15000 })
       .scrollIntoView()
       .should('be.visible');
@@ -45,7 +44,8 @@ describe('Dashboard Cards Display', () => {
       .should('be.visible');
     cy.log('Resume Created by Learners section is visible');
   });
-   it('Scroll to No of Verification section', () => {
+
+  it('Scroll to No of Verification section', () => {
     cy.contains('h6', 'No of Verification', { timeout: 15000 })
       .scrollIntoView()
       .should('be.visible');
@@ -66,6 +66,6 @@ describe('Dashboard Cards Display', () => {
     cy.log('Access Report section is visible');
   });
 });
-});
-  
-export{};
+
+// Needed only for TypeScript to avoid "Cannot redeclare block-scoped variable" errors
+export {};
