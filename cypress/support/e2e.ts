@@ -22,5 +22,6 @@ Cypress.on('uncaught:exception', (err) => {
     return false; // prevents Cypress from failing the test
     
   }
-  
+
+
 });
