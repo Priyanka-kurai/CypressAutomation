@@ -101,3 +101,4 @@ describe('Instructor Management Tests', () => {
     cy.log('Successfully verified: New instructor created and appears in list');
   });
 });
+export{};

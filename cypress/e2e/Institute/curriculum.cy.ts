@@ -38,3 +38,4 @@ describe('Curriculum Management Tests', () => {
 
   });
 });
+export{};
