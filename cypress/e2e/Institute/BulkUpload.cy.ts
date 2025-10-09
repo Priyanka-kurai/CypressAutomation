@@ -116,3 +116,4 @@ describe('Bulk Upload Learners Tests', () => {
     cy.contains('Upload failed, please try again', { timeout: 10000 }).should('be.visible');
   });
 });
+export {};

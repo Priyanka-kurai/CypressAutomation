@@ -3,7 +3,7 @@
 describe('Import Marks Button Test', () => {
 
   beforeEach(() => {
-    Cypress.on('uncaught:exception', () => false); // prevent test failure on app errors
+  //  Cypress.on('uncaught:exception', () => false); // prevent test failure on app errors
 
     // Step 1: Log in and navigate to Learners page
     cy.visit('https://test.truscholar.io/');
@@ -34,3 +34,4 @@ describe('Import Marks Button Test', () => {
   });
 
 });
+export {};

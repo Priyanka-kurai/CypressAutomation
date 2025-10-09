@@ -41,3 +41,4 @@ cy.contains('label', 'Select Course').parent().find('input').should('have.value'
     
 })
 
+export {};
