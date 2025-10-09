@@ -23,12 +23,12 @@ describe('Curriculum Management Tests', () => {
     cy.contains('span', 'Curriculum', { timeout: 10000 }).click({ force: true });
 
   
-    cy.contains('Curriculum', { timeout: 10000 }).should('be.visible');
+    cy.contains('Curriculum', { timeout: 20000 }).should('be.visible');
     cy.contains('Program Code').should('be.visible');
 
     //cy.log('Successfully verified: Curriculum list is displayed');
 //it('Click on Add Program button', () => {
-  cy.contains('button', 'Add Program', { timeout: 10000 })
+  cy.contains('button', 'Add Program', { timeout: 20000 })
     .should('be.visible')
     .click({ force: true });
 

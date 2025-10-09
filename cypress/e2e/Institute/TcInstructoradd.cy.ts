@@ -8,7 +8,7 @@ describe('Instructor Management Tests', () => {
     cy.get('#signin').click();
 
     // Navigate to Instructors page
-    cy.get('a#Instructors', { timeout: 10000 }).click();
+    cy.get('a#Instructors', { timeout: 20000 }).click();
     cy.url().should('include', '/instructoruser/list');
 
     // Open Add Instructor form

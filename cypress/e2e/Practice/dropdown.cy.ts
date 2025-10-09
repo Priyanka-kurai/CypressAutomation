@@ -6,10 +6,10 @@ describe("Dropdown test on ExpandTesting", () => {
   });
 
   it("loops through dropdown values", () => {
-    values.forEach((val) => {
+     values.forEach((val) => {
       cy.get("#dropdown").select(val);
       cy.get("#dropdown option:selected").should("have.text", val);
     });
   });
-});
+}); 
 export {};

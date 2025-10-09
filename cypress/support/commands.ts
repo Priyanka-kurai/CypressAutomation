@@ -4,4 +4,8 @@
 // ***********************************************
 
 // 👇 Keep this so TypeScript isolatedModules doesn’t complain
-export {};
+import 'cypress-file-upload';
+//import 'cypress-downloadfile/lib/downloadFileCommand';
+
+
+export { };

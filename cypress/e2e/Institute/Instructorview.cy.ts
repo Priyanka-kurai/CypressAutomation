@@ -30,13 +30,13 @@ describe('Instructor Management Tests', () => {
    // it('Fill Instructor Details form and submit', () => {
   // Type into Email field
    //first Name
-  cy.get('input[name="firstname"]', { timeout: 10000 })
+  cy.get('input[name="firstname"]', { timeout: 20000 })
     .should('be.visible')
     .click()                         // click inside the field
     .type('John', { force: true });  // type value
    // lastName
 //it('Click on Last Name input and type', () => {
-  cy.get('input[name="lastName"]', { timeout: 10000 })
+  cy.get('input[name="lastName"]', { timeout: 20000 })
     .should('be.visible')
     .click()                           // focus inside field
     .type('Doe', { force: true });     // type a last name

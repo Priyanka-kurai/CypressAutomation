@@ -20,5 +20,5 @@ describe('Instructor List Display', () => {
   });
 });
 
-export {};
+export { };
 

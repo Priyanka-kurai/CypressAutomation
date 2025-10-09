@@ -215,12 +215,7 @@ cy.get('div.react-datepicker-wrapper input[placeholder*="Sep"]')
 // Using aria-label
 
 // Example: Select September 2025 (monthIndex = 8)
-
-
-
-
-
-    })
+ })
 
   }) 
 })
