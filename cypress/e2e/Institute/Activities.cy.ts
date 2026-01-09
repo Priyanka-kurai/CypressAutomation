@@ -244,3 +244,4 @@ cy.contains('Certificate Updated').should('be.visible');
 
 })
 })
+export {}
