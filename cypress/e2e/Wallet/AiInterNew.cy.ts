@@ -1,5 +1,11 @@
 describe('AI Interview – Full Multi-Step Flow', () => {
 
+  // ================= TYPES =================
+  type SelectedDomain = {
+    key: 'engineering' | 'finance' | 'healthcare' | 'customer';
+  };
+
+  // ================= PERMISSIONS =================
   before(() => {
     Cypress.automation('remote:debugger:protocol', {
       command: 'Browser.grantPermissions',
@@ -12,7 +18,7 @@ describe('AI Interview – Full Multi-Step Flow', () => {
 
   it('should complete interview setup and answer questions successfully', () => {
 
-    // ---------------- VISIT ----------------
+    // ================= VISIT =================
     cy.visit('https://frontend-v2-712919537046.asia-southeast1.run.app', {
       onBeforeLoad(win) {
         cy.stub(win.navigator.mediaDevices, 'getUserMedia').resolves({
@@ -27,8 +33,11 @@ describe('AI Interview – Full Multi-Step Flow', () => {
     cy.get('form').should('be.visible');
 
     const companies = ['Google', 'Microsoft', 'Amazon', 'Apple', 'Meta'];
+    const randomCompany = companies[Math.floor(Math.random() * companies.length)];
+
     cy.get('input[placeholder="Enter company or your name"]')
-      .type(companies[Math.floor(Math.random() * companies.length)]);
+      .clear()
+      .type(randomCompany);
 
     cy.get('select').eq(0).select('domain-specific');
     cy.get('select').eq(1).select('en');
@@ -37,60 +46,44 @@ describe('AI Interview – Full Multi-Step Flow', () => {
       .should('not.be.disabled')
       .click();
 
-    // ================= STEP 2 (RANDOM DOMAIN → RANDOM ROLE) =================
+    // ================= STEP 2 (DOMAIN → ROLE) =================
     const domainRoleMap = {
       engineering: {
         domainValue: '6874b488e8d5483ad607a069',
-        roles: [
-          'Software Engineer',
-          'Backend Developer',
-          'Frontend Developer'
-        ]
+        roles: ['Software Engineer', 'Backend Developer', 'Frontend Developer'],
       },
       finance: {
         domainValue: '6874b488e8d5483ad607a06a',
-        roles: [
-          'Accountant',
-          'Financial Analyst',
-          'Auditor'
-        ]
+        roles: ['Accountant', 'Financial Analyst', 'Auditor'],
       },
       healthcare: {
         domainValue: '6874b488e8d5483ad607a06b',
-        roles: [
-          'Doctor',
-          'Healthcare Assistant',
-          'Medical Officer'
-        ]
+        roles: ['Doctor', 'Healthcare Assistant', 'Medical Officer'],
       },
       customer: {
         domainValue: '6874b488e8d5483ad607a067',
-        roles: [
-          'Customer Support Executive',
-          'Support Analyst',
-          'Customer Success Manager'
-        ]
-      }
-    };
+        roles: ['Customer Support Executive', 'Support Analyst', 'Customer Success Manager'],
+      },
+    } as const;
 
-    // Pick random domain
-    const domainKeys = Object.keys(domainRoleMap);
-    const selectedDomainKey = domainKeys[Math.floor(Math.random() * domainKeys.length)];
+    const domainKeys = Object.keys(domainRoleMap) as Array<SelectedDomain['key']>;
+    const selectedDomainKey =
+      domainKeys[Math.floor(Math.random() * domainKeys.length)];
 
-    const selectedDomain = domainRoleMap[selectedDomainKey as keyof typeof domainRoleMap];
+    const selectedDomainConfig = domainRoleMap[selectedDomainKey];
 
-    // Save for later (answers)
-    cy.wrap({ key: selectedDomainKey }).as('selectedDomain');
+    // ✅ IMPORTANT: typed alias
+    cy.wrap<SelectedDomain>({ key: selectedDomainKey }).as('selectedDomain');
 
-    // Select domain
-    cy.get('select').eq(0).select(selectedDomain.domainValue);
+    cy.get('select').eq(0).select(selectedDomainConfig.domainValue);
 
-    // Wait for roles API
     cy.intercept('GET', '**/roles/**').as('getRoles');
     cy.wait('@getRoles');
 
-    // Pick random role for that domain
-    const randomRole = selectedDomain.roles[Math.floor(Math.random() * selectedDomain.roles.length)];
+    const randomRole =
+      selectedDomainConfig.roles[
+        Math.floor(Math.random() * selectedDomainConfig.roles.length)
+      ];
 
     cy.get('select').eq(1)
       .should('not.be.disabled')
@@ -124,118 +117,56 @@ describe('AI Interview – Full Multi-Step Flow', () => {
     // ================= STEP 4 =================
     cy.wait(3000);
 
-    // ================= STEP 5 =================
-    cy.get('@selectedDomain').then((wrappedValue) => {
-      const { key } = wrappedValue as { key: string };
+    // ================= STEP 5 (✅ FIXED) =================
+    cy.get<SelectedDomain>('@selectedDomain').then((selectedDomain) => {
 
+      const key = selectedDomain.key; // ✅ fully typed
       const used = new Set<string>();
 
-      const answers = {
+      const answers: Record<SelectedDomain['key'], string[]> = {
         engineering: [
-          `I am a backend software engineer with experience in building APIs.
-I have worked with microservices and cloud platforms.
-I focus on writing clean, scalable, and maintainable code.`,
-
-          `I have implemented CI/CD pipelines to automate deployments.
-This reduced manual errors and improved release speed.
-I worked closely with QA and DevOps teams.`,
-
-          `I have optimized database queries to improve performance.
-I analyzed slow queries and indexing strategies.
-This helped reduce response time significantly.`,
-
-          `I debug production issues using logs and monitoring tools.
-Root cause analysis is an important part of my work.
-I always aim for permanent fixes.`,
-
-          `I follow best coding practices and write unit tests.
-Code reviews help maintain quality and consistency.
-Documentation is part of my development process.`
+          'I am a backend engineer experienced in APIs and microservices.',
+          'I have implemented CI/CD pipelines for automated deployments.',
+          'I optimized database queries to improve performance.',
+          'I debug production issues using logs and monitoring.',
+          'I follow clean code practices and write unit tests.',
         ],
-
         finance: [
-          `I have handled financial reporting and reconciliations.
-My role involved preparing accurate financial statements.
-I ensured compliance with accounting standards.`,
-
-          `I worked on budgeting and forecasting activities.
-I analyzed expenses and revenue trends.
-This supported management decision-making.`,
-
-          `I have experience in financial data analysis.
-I identified trends and potential risks.
-Accuracy and attention to detail were critical.`,
-
-          `I collaborated with internal teams on financial planning.
-Clear communication helped align financial goals.
-Timely reporting was always maintained.`,
-
-          `I ensured regulatory compliance in all financial processes.
-I followed internal controls and audit guidelines.
-This reduced financial risks for the organization.`
+          'I handled financial reporting and reconciliations.',
+          'I worked on budgeting and forecasting activities.',
+          'I analyzed financial data to identify trends.',
+          'I collaborated with teams on financial planning.',
+          'I ensured regulatory compliance and audits.',
         ],
-
         healthcare: [
-          `I supported patient care by following strict medical protocols.
-I worked closely with doctors and nursing staff.
-Patient safety was my top priority.`,
-
-          `I have experience working with electronic health records.
-I ensured accurate and timely patient data entry.
-Confidentiality was always maintained.`,
-
-          `I assisted in daily clinical operations and patient monitoring.
-Clear communication with medical teams was essential.
-I handled responsibilities with care and empathy.`,
-
-          `I followed healthcare compliance and safety guidelines.
-I helped maintain hygiene and infection control standards.
-This ensured a safe environment for patients.`,
-
-          `I provided compassionate support to patients and families.
-I addressed concerns calmly and professionally.
-Empathy guided my approach to care.`
+          'I supported patient care following medical protocols.',
+          'I worked with electronic health records.',
+          'I assisted in clinical operations and monitoring.',
+          'I followed healthcare compliance standards.',
+          'I provided compassionate patient support.',
         ],
-
         customer: [
-          `I handled high-volume customer queries across multiple channels.
-I focused on understanding customer issues clearly.
-Providing timely solutions was my priority.`,
-
-          `I resolved customer complaints professionally and calmly.
-Active listening helped de-escalate situations.
-Customer satisfaction was always the goal.`,
-
-          `I collaborated with internal teams to resolve complex issues.
-Clear documentation improved resolution time.
-This enhanced overall customer experience.`,
-
-          `I tracked customer feedback and support metrics.
-This helped identify areas for improvement.
-Service quality improved as a result.`,
-
-          `I maintained clear and polite communication with customers.
-Building trust was an important part of my role.
-Consistency helped improve retention rates.`
-        ]
+          'I handled high-volume customer queries.',
+          'I resolved customer complaints professionally.',
+          'I collaborated with teams to resolve issues.',
+          'I tracked customer feedback and metrics.',
+          'I built trust through clear communication.',
+        ],
       };
 
-      const pool = answers[key as keyof typeof answers];
+      const pool = answers[key];
 
       const answerQuestion = (qNo: number) => {
-        cy.contains(`Question ${qNo} of`, { timeout: 20000 })
-          .should('be.visible');
-        cy.wait(5000);  // Wait before typing
-        
-        const answer = pool.find(a => !used.has(a)) || pool[0];
+        cy.contains(`Question ${qNo} of`, { timeout: 20000 }).should('be.visible');
+
+        const answer = pool.find(a => !used.has(a))!;
         used.add(answer);
-        cy.wait(2000);  // Wait before typing
 
         cy.get('textarea')
-          .should('be.visible').wait(1000)  
+          .should('be.visible')
+          .clear()
           .type(answer, { delay: 20 });
-        cy.wait(2000); // Wait after typing
-        
+
         cy.contains('button', 'Post Answer').click();
 
         if (qNo < 5) {
@@ -246,27 +177,15 @@ Consistency helped improve retention rates.`
         }
       };
 
-      cy.wrap([1, 2, 3, 4, 5]).each((qNo) => {
-        answerQuestion(qNo as number);
+cy.wrap([1, 2, 3, 4, 5]).each((qNo: number) => {
+  answerQuestion(qNo);
       });
 
       // ================= STEP 6 =================
-      cy.contains('button', 'Get Assessment!', { timeout: 20000 })
-        .click();
-      cy.wait(10000);
-      
-      cy.contains('Performance Review', { timeout: 30000 });
-      cy.wait(4000);
-      
-      // Scroll slowly to load all lazy sections
-      cy.scrollTo('top');
+      cy.contains('button', 'Get Assessment!', { timeout: 20000 }).click();
+      cy.contains('Performance Review', { timeout: 30000 }).should('be.visible');
 
-      cy.scrollTo('center', { duration: 1000 });
-      cy.wait(1000);
-
-      cy.scrollTo('bottom', { duration: 1500 });
-      cy.wait(2000);
-
+      cy.scrollTo('bottom');
       cy.contains('button', 'PDF Report')
         .scrollIntoView()
         .should('be.visible')
@@ -275,4 +194,4 @@ Consistency helped improve retention rates.`
   });
 });
 
-export {}
+export {};
