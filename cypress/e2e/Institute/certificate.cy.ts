@@ -56,3 +56,4 @@ cy.get('input[type="file"]').attachFile('certificate_data.xlsx');
   cy.wait(3000);
 })
 })
+export {}
