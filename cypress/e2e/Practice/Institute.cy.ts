@@ -14,7 +14,7 @@ describe('HomePage', () => {
   describe('Login Flow', () => {
     it('should log in with valid credentials', () => {
       cy.visit('https://test.truscholar.io/');
-      cy.viewport(1000, 660);
+      cy.viewport(1200, 660);
 
       // ✅ Click "Log In as Organization" card
       cy.get(':nth-child(1) > div > [style="font-size: 16px; color: rgb(51, 51, 51); font-weight: 600;"]').click();

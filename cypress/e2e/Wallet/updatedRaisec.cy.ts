@@ -1,0 +1,413 @@
+/// <reference types="cypress" />
+
+// cypress/e2e/riasec_all_a_combinations.cy.ts
+describe('RIASEC Assessment: All A-Starting Combinations - Submit and Wait for Results', () => {
+  const PAUSE = 600;
+  const APP_URL = 'https://riasec-app-592805402248.asia-southeast1.run.app';
+
+  const QUESTION_MAP: Record<number, { A: string; B: string }> = {
+    1: { A: 'R', B: 'I' }, 2: { A: 'I', B: 'R' }, 3: { A: 'R', B: 'A' }, 4: { A: 'A', B: 'R' },
+    5: { A: 'R', B: 'S' }, 6: { A: 'S', B: 'R' }, 7: { A: 'R', B: 'E' }, 8: { A: 'E', B: 'R' },
+    9: { A: 'R', B: 'C' }, 10: { A: 'C', B: 'R' }, 11: { A: 'I', B: 'A' }, 12: { A: 'A', B: 'I' },
+    13: { A: 'I', B: 'S' }, 14: { A: 'S', B: 'I' }, 15: { A: 'I', B: 'E' }, 16: { A: 'E', B: 'I' },
+    17: { A: 'I', B: 'C' }, 18: { A: 'C', B: 'I' }, 19: { A: 'A', B: 'S' }, 20: { A: 'S', B: 'A' },
+    21: { A: 'A', B: 'E' }, 22: { A: 'E', B: 'A' }, 23: { A: 'A', B: 'C' }, 24: { A: 'C', B: 'A' },
+    25: { A: 'S', B: 'E' }, 26: { A: 'E', B: 'S' }, 27: { A: 'S', B: 'C' }, 28: { A: 'C', B: 'S' },
+    29: { A: 'E', B: 'C' }, 30: { A: 'C', B: 'E' }
+  };
+
+  const CURRENT_FIELDS = [
+    'IT', 'Engineering', 'Healthcare', 'Finance', 'Education',
+    'Marketing', 'Sales', 'Design', 'Research', 'Manufacturing',
+    'Consulting', 'Media', 'Agriculture', 'Hospitality', 'Legal'
+  ];
+
+  const R_COMBINATIONS = [
+    'RAI', 'RAS', 'RAE', 'RAC',
+    'RIA', 'RIS', 'RIE', 'RIC',
+    'RSA', 'RSI', 'RSE', 'RSC',
+    'REA', 'REI', 'RES', 'REC',
+    'RCA', 'RCI', 'RCS', 'RCE'
+  ];
+
+  const pause = (ms = PAUSE) => cy.wait(ms);
+
+  function selectInterestsForCode(targetCode: string): Cypress.Chainable<string[]> {
+    const allInterests = [
+      '#interest1', '#interest2', '#interest3', '#interest4',
+      '#interest5', '#interest6', '#interest7', '#interest8', '#interest9'
+    ];
+
+    const numToSelect = Math.floor(Math.random() * 3) + 3;
+    const selectedNames: string[] = [];
+
+    return cy.get('body').then($body => {
+      const present = allInterests.filter(id => $body.find(id).length > 0);
+      const shuffled = Cypress._.shuffle(present);
+      const chosen = shuffled.slice(0, Math.min(numToSelect, shuffled.length));
+      cy.log(`Chosen interest ids: ${chosen.join(', ')}`);
+      return cy.wrap(chosen);
+    })
+    .each((interestId: string) => {
+      cy.get(interestId).check({ force: true }).should('be.checked');
+      cy.get(`label[for="${interestId.substring(1)}"]`)
+        .invoke('text')
+        .then(txt => {
+          selectedNames.push(txt.trim());
+          cy.log(`✓ Selected: ${txt.trim()}`);
+        });
+    })
+    .then(() => {
+      cy.log(`📋 Total interests selected: ${selectedNames.length}`);
+      cy.screenshot(`interests-${targetCode}`, { capture: 'fullPage' });
+      return cy.wrap(selectedNames);
+    });
+  }
+
+  function fillBasicInfo(testName: string, targetCode: string) {
+    const testData: any = { targetCode, timestamp: new Date().toISOString(), testName };
+    cy.visit(APP_URL);
+    pause(800);
+    cy.contains('Get Started', { timeout: 10000 }).click();
+    pause();
+
+    const email = `${testName.toLowerCase()}_${Date.now()}@example.com`;
+    const randomField = CURRENT_FIELDS[Math.floor(Math.random() * CURRENT_FIELDS.length)];
+
+    testData.name = testName;
+    testData.email = email;
+    testData.educationLevel = "Bachelor's Degree";
+    testData.experienceYears = '2';
+    testData.currentField = randomField;
+
+    cy.log(`📝 Using random field: ${randomField}`);
+
+    cy.get('input[name="name"]').clear().type(testName);
+    cy.get('input[name="email"]').clear().type(email);
+    cy.get('#education_level').select("Bachelor's Degree");
+    cy.get('#experience_years').clear().type('2');
+    cy.get('#current_field').clear().type(randomField);
+
+    cy.screenshot(`basic-info-${targetCode}`, { capture: 'fullPage' });
+
+    pause(500);
+    cy.contains('Continue to Interests').click();
+    pause();
+
+    return selectInterestsForCode(targetCode).then(interests => {
+      testData.selectedInterests = interests.join(', ');
+      cy.contains('button.btn.btn-primary', 'Continue to RIASEC Assessment', { timeout: 10000 })
+        .should('be.visible')
+        .click();
+      pause(800);
+      Cypress.env('currentTestData', testData);
+    });
+  }
+
+  function generateAnswers(targetCode: string): Record<number, string> {
+    const answers: Record<number, string> = {};
+    const [first, second, third] = targetCode.split('');
+
+    cy.log('═══════════════════════════════════════');
+    cy.log(`🎯 TARGET: ${targetCode}`);
+    cy.log(`📊 Priority: ${first}(5pts) > ${second}(4pts) > ${third}(3pts)`);
+    cy.log('═══════════════════════════════════════');
+
+    const targetScores: Record<string, number> = { [first]: 5, [second]: 4, [third]: 3 };
+    const currentScores: Record<string, number> = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+    const answerLog: string[] = [];
+
+    for (let q = 1; q <= 30; q++) {
+      const optionA = QUESTION_MAP[q].A;
+      const optionB = QUESTION_MAP[q].B;
+      const scoreA = targetScores[optionA] || 0;
+      const scoreB = targetScores[optionB] || 0;
+
+      let answer: 'A' | 'B';
+      if (scoreA > scoreB) {
+        answer = 'A';
+        currentScores[optionA]++;
+      } else if (scoreB > scoreA) {
+        answer = 'B';
+        currentScores[optionB]++;
+      } else {
+        answer = 'A';
+        currentScores[optionA]++;
+      }
+
+      answers[q] = answer;
+      answerLog.push(`Q${q}:${answer}`);
+      
+      const marker = scoreA > 0 || scoreB > 0 ? '⭐' : '  ';
+      cy.log(`${marker} Q${q.toString().padStart(2)}: A=${optionA} B=${optionB} → ${answer}`);
+    }
+
+    cy.log('───────────────────────────────────────');
+    cy.log('📊 Expected scores:');
+    Object.entries(currentScores)
+      .sort(([, a], [, b]) => Number(b) - Number(a))
+      .forEach(([letter, score]) => {
+        const marker = [first, second, third].includes(letter) ? '🎯' : '  ';
+        cy.log(`${marker} ${letter}: ${score}`);
+      });
+    cy.log('═══════════════════════════════════════');
+
+    const testData = Cypress.env('currentTestData') || {};
+    testData.answers = answerLog.join(', ');
+    testData.expectedScores = JSON.stringify(currentScores);
+    Cypress.env('currentTestData', testData);
+
+    return answers;
+  }
+
+  function selectAnswer(choice: 'A' | 'B', questionNum: number) {
+    cy.log(`  → Q${questionNum}: Selecting option ${choice}`);
+    cy.get('input[type="radio"]', { timeout: 10000 }).should('have.length', 2);
+    cy.get('input[type="radio"]').then($radios => {
+      if (choice === 'A') {
+        cy.wrap($radios[0]).click({ force: true }).should('be.checked');
+      } else {
+        cy.wrap($radios[1]).click({ force: true }).should('be.checked');
+      }
+    });
+    pause(200);
+  }
+
+  function answerQuestions(answers: Record<number, string>) {
+    for (let q = 1; q <= 30; q++) {
+      cy.log(`📝 Question ${q}`);
+      cy.contains(`Question ${q} of 30`, { timeout: 15000 }).should('be.visible');
+      selectAnswer(answers[q] as 'A' | 'B', q);
+      cy.contains('button', 'Next Question', { timeout: 10000 })
+        .should('be.visible')
+        .and('not.be.disabled')
+        .click();
+      pause(500);
+    }
+  }
+
+  function clickAllJobClusters() {
+    cy.log('🔍 Looking for job clusters to click...');
+    
+    // First get all cluster cards
+    cy.get('.cluster-select-card').then(($clusters) => {
+      const clusterCount = $clusters.length;
+      cy.log(`Found ${clusterCount} cluster cards`);
+      
+      if (clusterCount === 0) {
+        cy.log('ℹ️ No cluster cards found on this page');
+        return;
+      }
+      
+      // Click each cluster card one by one
+      for (let i = 0; i < clusterCount; i++) {
+        cy.log(`🖱️ Starting cluster ${i + 1} of ${clusterCount}`);
+        
+        // Get fresh reference to cluster cards each iteration
+        cy.get('.cluster-select-card').eq(i).then(($cluster) => {
+          const clusterName = $cluster.find('h5').text().trim();
+          cy.log(`  Clicking: ${clusterName}`);
+          
+          // Click the cluster card
+          cy.get('.cluster-select-card').eq(i).click({ force: true });
+          
+          // Wait for the click to register
+          pause(2000);
+          
+          // Take screenshot after clicking cluster
+          cy.screenshot(`cluster-${i + 1}-clicked-${clusterName.replace(/\s+/g, '-')}`, { capture: 'fullPage' });
+          
+          // Wait for job recommendations to load
+          cy.log(`  ⏳ Waiting for job recommendations...`);
+          
+          // Check for job cards in the recommendations container
+          cy.get('#recommendationsContainer .job-card, .job-card, .card.h-100', { timeout: 30000 })
+            .should('exist')
+            .and('have.length.at.least', 1)
+            .then(($jobs) => {
+              cy.log(`  ✅ Loaded ${$jobs.length} jobs for ${clusterName}`);
+              
+              // Take screenshot of loaded jobs
+              cy.screenshot(`cluster-${i + 1}-jobs-${clusterName.replace(/\s+/g, '-')}`, { capture: 'fullPage' });
+              
+              // Wait a bit before going back
+              pause(1500);
+              
+              // Click the "Back to Clusters" button
+              cy.log(`  ↩️ Clicking "Back to Clusters" button...`);
+              cy.get('button:contains("Back to Clusters")').click({ force: true });
+              
+              // Wait for clusters to reappear
+              pause(2000);
+              
+              // Verify we're back to cluster selection
+              cy.get('.cluster-select-card', { timeout: 15000 })
+                .should('exist')
+                .and('have.length', clusterCount)
+                .then(() => {
+                  cy.log(`  ✅ Back to cluster selection`);
+                  
+                  // Take screenshot after returning
+                  cy.screenshot(`cluster-${i + 1}-returned`, { capture: 'fullPage' });
+                  
+                  // Wait before next iteration
+                  pause(1000);
+                });
+            });
+        });
+      }
+      
+      cy.log('✅ All clusters clicked!');
+    });
+  }
+
+  function waitForResultGeneration(targetCode: string) {
+    cy.log('═══════════════════════════════════════');
+    cy.log('📊 Submitting assessment...');
+    
+    // Wait for submit button and click
+    cy.contains('button', 'Submit', { timeout: 10000 })
+      .should('be.visible')
+      .and('not.be.disabled')
+      .click();
+    
+    cy.log('✅ Assessment submitted! Waiting for results...');
+    
+    // Wait for URL to change to results page
+    cy.url({ timeout: 30000 }).should('include', '/result');
+    cy.log('✓ Results page loaded');
+    
+    // Take screenshot of initial results
+    cy.screenshot(`result-initial-${targetCode}`, { capture: 'fullPage' });
+    pause(20000);
+    // Wait for result code to appear
+    cy.get('body', { timeout: 45000 }).then(($body) => {
+      const text = $body.text();
+      const hasCode = text.match(/Current Code:\s*([A-Z]{3})/i) || text.match(/\b([RIASEC]{3})\b/);
+      if (!hasCode) {
+        throw new Error('Result code not found on page');
+      }
+      cy.log(`✓ Result code detected: ${hasCode[1]}`);
+    });
+    
+ 
+    
+    // Wait for recommendations container
+    cy.log('⏳ Waiting for recommendations container...');
+    cy.get('#recommendationsContainer', { timeout: 60000 }).should('be.visible');
+    cy.log('✓ Recommendations container loaded');
+    
+    // Check if Get Recommendations button is visible and click it
+    cy.get('body').then($body => {
+      const $btn = $body.find('#generateRecommendations');
+      if ($btn.length > 0 && $btn.is(':visible') && !$btn.hasClass('d-none')) {
+        cy.log('🔘 Clicking Get Recommendations button...');
+        cy.get('#generateRecommendations').click({ force: true });
+        
+        // Wait for job recommendations to start loading
+        cy.log('⏳ Waiting for job recommendations to generate...');
+        cy.get('#recommendationsContainer .spinner-border, .loading-spinner, [class*="loading"]', { timeout: 30000 })
+          .should('exist')
+          .then(() => {
+            cy.log('✓ Job recommendations generation started...');
+          });
+      } else {
+        cy.log('ℹ️ Recommendations button not visible or already clicked');
+      }
+    });
+    
+    // Wait for cluster cards to appear
+    cy.log('⏳ Waiting for job clusters to load...');
+    cy.get('#recommendationsContainer .cluster-select-card', { timeout: 90000 })
+      .should('exist')
+      .and('have.length.at.least', 1)
+      .then(($clusters) => {
+        cy.log(`✓ Job clusters loaded: ${$clusters.length} clusters found`);
+        
+        // Click on all job clusters
+        clickAllJobClusters();
+      });
+ // Wait for aptitude scores to load
+cy.log('⏳ Waiting for aptitude scores...');
+
+// Scroll to aptitude section
+cy.get('#aptitudeScores', { timeout: 45000 })
+  .should('exist')
+  .scrollIntoView({ easing: 'linear', duration: 800 });
+
+// Ensure section is visible
+cy.get('#aptitudeScores')
+  .should('be.visible');
+
+// Wait for all progress bars to render
+cy.get('#aptitudeScores .progress-bar', { timeout: 45000 })
+  .should('have.length.at.least', 5);
+
+cy.log('✓ Aptitude scores loaded and visible');
+
+
+    // Final verification that page is fully loaded
+    cy.log('⏳ Final verification of complete result generation...');
+    cy.get('body', { timeout: 60000 }).then(($body) => {
+      // Check for multiple indicators of completion
+      const hasJobs = $body.find('.job-card, .card, .recommendation-card').length > 0;
+      const hasClusters = $body.find('.cluster-select-card').length > 0;
+      const hasAptitude = $body.find('#aptitudeScores .progress-bar').length >= 5;
+      const hasCode = $body.text().match(/Current Code:\s*([A-Z]{3})/i);
+      
+      if (!hasJobs && !hasClusters) throw new Error('No job clusters or job cards found');
+      //if (!hasAptitude) throw new Error('Aptitude scores incomplete');
+      //if (!hasCode) throw new Error('RIASEC code not found');
+      
+      cy.log('✅ All result components verified!');
+    });
+    
+    // Take final screenshot
+    cy.screenshot(`result-complete-${targetCode}`, { capture: 'fullPage' });
+    
+    // Extract and log final results for verification
+    cy.get('body').then($body => {
+      const text = $body.text();
+      const match = text.match(/Current Code:\s*([A-Z]{3})/i) || text.match(/\b([RIASEC]{3})\b/);
+      const actualCode = match ? match[1] : 'NOT_FOUND';
+      
+      const jobCount = $body.find('.job-card, .card, .recommendation-card').length;
+      const clusterCount = $body.find('.cluster-select-card').length;
+      const aptitudeCount = $body.find('#aptitudeScores .progress-bar').length;
+      
+      cy.log('═══════════════════════════════════════');
+      cy.log('🎉 RESULT GENERATION COMPLETE!');
+      cy.log(`📊 RIASEC Code: ${actualCode}`);
+      cy.log(`📊 Job Clusters: ${clusterCount}`);
+      cy.log(`📊 Job Recommendations: ${jobCount}`);
+      cy.log(`📊 Aptitude Scores: ${aptitudeCount}`);
+      cy.log('═══════════════════════════════════════');
+      
+      const testData = Cypress.env('currentTestData') || {};
+      testData.actualResult = actualCode;
+      testData.jobCount = jobCount;
+      testData.clusterCount = clusterCount;
+      testData.aptitudeCount = aptitudeCount;
+      testData.completedAt = new Date().toISOString();
+      testData.testStatus = 'COMPLETE';
+      Cypress.env('currentTestData', testData);
+    });
+    
+    // Final pause to ensure everything is stable
+    pause(3000);
+  }
+
+  // Run tests for all A combinations
+  R_COMBINATIONS.slice(1).forEach(code => {
+    it(`should complete assessment, generate full results, and click all job clusters for ${code}`, () => {
+      const targetCode = code;
+      cy.intercept({ method: 'GET', url: '**/api/riasec/**' }).as('getRiasec');
+
+      fillBasicInfo(`Test_${targetCode}`, targetCode).then(() => {
+        const answers = generateAnswers(targetCode);
+        answerQuestions(answers);
+        waitForResultGeneration(targetCode);
+      });
+    });
+  });
+});

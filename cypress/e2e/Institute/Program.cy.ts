@@ -15,7 +15,7 @@ describe('Curriculum Management Tests', () => {
     cy.wait(1000);
 
     cy.contains('span', 'Curriculum', { timeout: 15000 }).click({ force: true });
-    cy.wait(1000);
+    cy.wait(1000); 
 
     cy.contains('button', 'Add Program', { timeout: 15000 }).click({ force: true });
     cy.wait(1500);

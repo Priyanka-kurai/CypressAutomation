@@ -109,6 +109,7 @@ it('Verify Protected PDF toggle (Yes/No)', () => {
  // Grab all toggles, pick the 2nd one (index 1)
 cy.get('input.MuiSwitch-input').eq(1).as('secondToggle');
 
+
 // Interact with it
 cy.get('@secondToggle').check({ force: true });
 cy.get('@secondToggle').should('be.checked');
