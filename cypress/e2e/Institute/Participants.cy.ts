@@ -71,3 +71,4 @@ cy.get('.MuiAutocomplete-popper li', { timeout: 10000 })
 });
 
 })
+export {}

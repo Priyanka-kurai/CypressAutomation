@@ -26,3 +26,4 @@ cy.get(':nth-child(1) > .MuiPaper-root > .MuiCardMedia-root')
 cy.get(':nth-child(1) > .MuiPaper-root > .MuiCardActions-root > .MuiGrid-justify-xs-space-between > .MuiGrid-grid-xs-2 > .MuiButtonBase-root > .MuiButton-label').click({ force: true });
   })
 })
+export {}

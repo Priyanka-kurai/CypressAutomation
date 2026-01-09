@@ -56,3 +56,4 @@ describe('RAIsec - complete 30 questions (stubbed)', () => {
     cy.get('.final-results', { timeout: 20000 }).should('exist');
   });
 });
+export {}

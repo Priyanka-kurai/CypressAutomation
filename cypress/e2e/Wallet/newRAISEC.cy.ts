@@ -31,3 +31,4 @@ cy.contains('.option-card', 'A', { timeout: 20000 })
 
 })
 })
+export {}

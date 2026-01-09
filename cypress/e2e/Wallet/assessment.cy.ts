@@ -137,3 +137,4 @@ describe('TruScholar — AI Career Test', () => {
     cy.contains('Start Assessment').should('be.visible');
   });
 });
+export {}

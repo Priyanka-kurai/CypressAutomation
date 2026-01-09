@@ -487,3 +487,4 @@ describe('Interview Form Multi-Step Test', () => {
     }); // End of cy.get('@selectedDomain')
   });
 });
+export {}

@@ -51,4 +51,4 @@ cy.contains('button', 'Apply →')
 
 })
 })
-
+export {}

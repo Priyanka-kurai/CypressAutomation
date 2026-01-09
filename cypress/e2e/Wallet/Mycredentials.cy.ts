@@ -54,3 +54,4 @@ cy.get('a', { timeout: 30000 })
 
   });
 });
+export {}

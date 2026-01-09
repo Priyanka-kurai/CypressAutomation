@@ -47,3 +47,4 @@ cy.contains('button', 'Next Question')
 
   })
 })
+export {}

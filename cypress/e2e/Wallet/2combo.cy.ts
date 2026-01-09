@@ -279,3 +279,4 @@ describe("AI Career Test — 30 Ordered RIASEC Patterns", () => {
   });
 
 });
+export {}

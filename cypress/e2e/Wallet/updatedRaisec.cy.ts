@@ -411,3 +411,4 @@ cy.log('✓ Aptitude scores loaded and visible');
     });
   });
 });
+export {}

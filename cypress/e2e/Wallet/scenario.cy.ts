@@ -152,3 +152,4 @@ describe('TruScholar Wallet — AI Career Test All Scenarios', () => {
   });
 
 });
+export {}

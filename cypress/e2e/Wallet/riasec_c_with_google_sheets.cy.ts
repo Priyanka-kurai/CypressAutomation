@@ -8,6 +8,7 @@ describe('RIASEC Assessment: All C-Starting Combinations (with Google Sheets Log
 
   // ✅ CORRECT MAPPING based on your actual questions (same mapping used across files)
   const QUESTION_MAP: Record<number, { A: string; B: string }> = {
+
     1: { A: 'R', B: 'I' },
     2: { A: 'I', B: 'R' },
     3: { A: 'R', B: 'A' },
@@ -388,3 +389,4 @@ describe('RIASEC Assessment: All C-Starting Combinations (with Google Sheets Log
     });
   });
 });
+export {}

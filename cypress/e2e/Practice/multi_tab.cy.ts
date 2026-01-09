@@ -41,3 +41,4 @@ describe('Multi-tab handling demo', () => {
   });
 
 });
+export {}

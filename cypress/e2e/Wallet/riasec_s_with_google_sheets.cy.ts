@@ -384,7 +384,9 @@ describe('RIASEC Assessment: All S-Starting Combinations (with Google Sheets Log
       answerQuestions(answers);
       handleSubmitAndVerify(code).then(() => {
         cy.log('🎉 Test complete! Check your Google Sheet now!');
+      
       });
     });
   });
 });
+export {}

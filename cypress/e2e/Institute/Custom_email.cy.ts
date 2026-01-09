@@ -29,3 +29,4 @@ it('Should editemail template details', () => {
 
 })
 })
+export {}

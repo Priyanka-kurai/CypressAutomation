@@ -132,3 +132,4 @@ describe('TruScholar Wallet — AI Career Test navigation', () => {
     });
   });
 });
+export {}

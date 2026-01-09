@@ -156,3 +156,4 @@ describe('TruScholar Wallet — AI Career Test navigation (full flow)', () => {
       .then(() => cy.log('Result/summary is visible - flow complete'));
   });
 });
+export {}
