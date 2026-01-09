@@ -472,7 +472,8 @@ describe('RIASEC Assessment: All A-Starting Combinations - Submit and Wait for R
     cy.screenshot('clusters-loaded', { capture: 'fullPage' });
     
     // Click on all job clusters and collect job data
-    return clickAllJobClusters().then((clusterJobsData) => {
+    return clickAllJobClusters().then((clusterJobsData: Record<string, string[]>) => {
+      
       // Store cluster jobs data
       const testData = Cypress.env('currentTestData') || {};
       testData.clusterJobsData = JSON.stringify(clusterJobsData);

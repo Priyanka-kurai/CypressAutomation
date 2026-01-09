@@ -418,21 +418,33 @@ function waitForResultGeneration(targetCode: string) {
       return clickAllJobClusters().then((clusterJobsData) => {
         // Store cluster jobs data
         const testData = Cypress.env('currentTestData') || {};
-        testData.clusterJobsData = JSON.stringify(clusterJobsData);
-        
-        // Format cluster jobs for Google Sheets
-        let clusterJobsText = '';
-        Object.entries(clusterJobsData).forEach(([clusterName, jobs]) => {
-          clusterJobsText += `${clusterName}: ${jobs.length} jobs\n`;
-          jobs.forEach(job => {
-            clusterJobsText += `  ${job}\n`;
-          });
-          clusterJobsText += '\n';
-        });
-        testData.clusterJobsSummary = clusterJobsText;
-        Cypress.env('currentTestData', testData);
-        
-        return cy.wrap(clusterJobsData);
+        // ✅ Add this type once (top of file or near helpers)
+type ClusterJobsData = Record<string, string[]>;
+
+// ---------------- UPDATED BLOCK ----------------
+
+// Format cluster jobs for Google Sheets
+let clusterJobsText = '';
+
+// ✅ Ensure clusterJobsData is typed
+const typedClusterJobsData = clusterJobsData as ClusterJobsData;
+
+Object.entries(typedClusterJobsData).forEach(([clusterName, jobs]) => {
+  clusterJobsText += `${clusterName}: ${jobs.length} jobs\n`;
+
+  jobs.forEach((job: string) => {
+    clusterJobsText += `  ${job}\n`;
+  });
+
+  clusterJobsText += '\n';
+});
+
+testData.clusterJobsSummary = clusterJobsText;
+Cypress.env('currentTestData', testData);
+
+// ✅ Return typed value
+return cy.wrap(typedClusterJobsData);
+
       });
     }).then(() => {
       // Continue with the rest of the function
