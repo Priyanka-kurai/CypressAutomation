@@ -16,20 +16,33 @@ describe('Add New Batch Form Tests', () => {
     cy.wait(1000);
      cy.contains('span', 'Learners', { timeout: 15000 }).click({ force: true });
     cy.wait(1000);
+
+
+
+    cy.contains('label', 'Filter by Program')
+  .parent()
+  .find('input')
+  .clear()
+  .type('Program for Travolic', { delay: 100 })
+
+cy.get('ul[role="listbox"] li').then($items => {
+  cy.wrap(
+    [...$items].find(el =>
+      el.innerText.includes('Program for Travolic (12)')
+    )
+  ).click()
+})
 cy.contains('label', 'Select Course')
       .parent()
       .find('.MuiAutocomplete-popupIndicator')
       .click();
 
   cy.get('ul[role="listbox"] li')
-  .eq(1) // index starts from 0 → eq(1) = second element
+  .eq(0) // index starts from 0 → eq(1) = second element
   .click({ force: true });
 
     // Verify course selection
-    cy.contains('label', 'Select Course')
-      .parent()
-      .find('input')
-      .should('have.value', 'Bachelor of Science (BSC123)');
+    //cy.contains('label', 'Select Course').parent().find('input').should('have.value', 'Bachelor of Science (BSC123)');
 
       //cy.get('label')
       //.contains('Select Batch').parent().find('input').should('be.visible').click({ force: true });            

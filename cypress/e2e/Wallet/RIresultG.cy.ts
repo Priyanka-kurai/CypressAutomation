@@ -41,7 +41,7 @@ describe('RIASEC — run assessment and handle R-I tie-breaker', () => {
 
   it('fills form, completes 30 Qs, detects R-I tie and answers tie-breaker favoring R', () => {
     // --- Visit and start ---
-    cy.visit('https://job-recommendation-878524709646.asia-southeast1.run.app/');
+    cy.visit('https://riasec-app-592805402248.asia-southeast1.run.app');
     pause(800);
     cy.contains('a.btn.btn-primary.btn-lg.px-5', 'Get Started', { timeout: 10000 }).click();
     pause(800);

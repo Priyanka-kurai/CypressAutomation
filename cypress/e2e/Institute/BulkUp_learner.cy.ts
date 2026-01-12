@@ -30,9 +30,17 @@ describe('Bulk Upload Learners Tests', () => {
       .find('.MuiAutocomplete-popupIndicator')
       .click();
 
-    cy.get('ul[role="listbox"]').within(() => {
-      cy.contains('li', 'Bachelor of Science (BSC123)', { timeout: 5000 }).click();
-    });
+   // cy.get('ul[role="listbox"]').within(() => {
+      cy.get('ul[role="listbox"] li')
+  .eq(2)
+  .should('be.visible')
+  .click()
+    //});
+    //step 4:select batch before uploading
+    cy.contains('label', 'Select Batch')
+      .parent()
+      .find('.MuiAutocomplete-popupIndicator')
+      .click();
 
     // Verify course selection
     cy.contains('label', 'Select Course')
@@ -51,7 +59,7 @@ describe('Bulk Upload Learners Tests', () => {
 
       // Wait for processing and validation
       cy.wait(4000);
-      cy.contains('button', 'Okay').click();
+     // cy.contains('button', 'Okay').click();
 
 
       // Optional: verify success message

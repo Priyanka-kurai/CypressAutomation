@@ -1,6 +1,6 @@
 describe('TruScholar Wallet — Complete End-to-End Resume Flow', () => {
 
-  it('should log in, open TruResume, and fill resume form successfully', () => {
+  it('should log in, open my credentials', () => {
 
     // === Setup ===
     cy.viewport(1200, 700);

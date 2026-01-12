@@ -2,7 +2,7 @@
 
 describe('RIASEC Assessment: All S-Starting Combinations with Google Sheets Logging', () => {
   const PAUSE = 600;
-  const APP_URL = 'https://job-recommendation-878524709646.asia-southeast1.run.app/';
+  const APP_URL = 'https://riasec-app-592805402248.asia-southeast1.run.app';
 
   // 🔑 GOOGLE SHEETS CONFIG - same deployment as your other tests
   const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby1z4QnhJvKGhUROrYrMNlZmO1qxr_pSKLE2afUg0kwfUHcADm3mZ8VnlQ3BeA9mqc1/exec';

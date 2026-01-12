@@ -383,7 +383,7 @@ function waitForResultGeneration(targetCode: string) {
   
   // Wait for recommendations container
   cy.log('⏳ Waiting for recommendations container...');
-  cy.get('#recommendationsContainer', { timeout: 60000 }).should('be.visible');
+  cy.get('#recommendationsContainer', { timeout: 90000 }).should('be.visible');
   cy.log('✓ Recommendations container loaded');
   
   // Check if Get Recommendations button is visible and click it

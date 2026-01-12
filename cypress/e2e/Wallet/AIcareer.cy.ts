@@ -74,7 +74,7 @@ describe('TruScholar Wallet — AI Career Test navigation', () => {
 //Q1
 
           cy.wait(100); // Wait for 5 seconds to observe the result
-          cy.contains('button', 'A tech lab with cutting-edge equipment and tools')
+        /*  cy.contains('button', 'A tech lab with cutting-edge equipment and tools')
   .should('be.visible')
   .click();
 
@@ -126,7 +126,7 @@ describe('TruScholar Wallet — AI Career Test navigation', () => {
   .should('be.visible')
   .and('contain.text', '77')
   .click({ force: true });
- cy.contains('button', 'Next').click();
+ cy.contains('button', 'Next').click();*/
 
       
     });

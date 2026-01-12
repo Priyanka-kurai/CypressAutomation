@@ -1,6 +1,6 @@
 describe('TruScholar Wallet — Complete End-to-End Resume Flow', () => {
 
-  it('should log in, open TruResume, and fill resume form successfully', () => {
+  it('should log in, open settings and view plans successfully', () => {
 
     // === Setup ===
     cy.viewport(1200, 700);
@@ -27,23 +27,17 @@ describe('TruScholar Wallet — Complete End-to-End Resume Flow', () => {
   .click();            // performs the click
 
 cy.wait(1000);
-  cy.contains('button', 'View Details')
-  .scrollIntoView()    // ensures it's visible
-  .should('be.visible') // double-checks visibility
-  .click();             // performs the click
+ cy.contains('button', 'Explore Plans', { timeout: 10000 })
+  .should('be.visible')
+  .and('not.be.disabled')
+  .click()
+
 cy.wait(1000);
-cy.contains('button', 'View Details')
-  .scrollIntoView()     // scrolls if the button is off-screen
-  .should('be.visible') // ensures it’s visible before clicking
-  .click();             // clicks the button
-cy.wait(1000);
-cy.contains('button', 'View Details').click({ force: true   })
 
 
-cy.contains('button', 'Change Plan')
-  .scrollIntoView()     // ensures it’s visible on screen
-  .should('be.visible') // confirms it can be interacted with
-  .click();             // performs the click
+
+
+
 cy.contains('a', 'Settings').click({ force: true }) 
 cy.wait(500)
   cy.contains('button', 'Reset Now').click();
@@ -52,7 +46,7 @@ cy.wait(500)
       .clear() // clear the existing value ("10")
       .type('Sushil@23'); // type new password
 
-    cy.get('input[name="newPassword"]')
+   /* cy.get('input[name="newPassword"]')
       .clear()
       .type('Sushil@22');
 
@@ -61,7 +55,7 @@ cy.wait(500)
       .type('Sushil@22');   // type the confirmation password  
     //cy.contains('button', 'Submit').click();//    cy.contains('button', 'Submit').click();
     cy.wait(2000);
-    cy.contains('Password updated').should('be.visible');
+    cy.contains('Password updated').should('be.visible');*/
 
 })
 

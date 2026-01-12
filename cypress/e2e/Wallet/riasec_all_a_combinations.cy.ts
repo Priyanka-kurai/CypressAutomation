@@ -4,6 +4,7 @@
 describe('RIASEC Assessment: All A-Starting Combinations with Google Sheets Logging', () => {
   const PAUSE = 600;
   const APP_URL = 'https://riasec-app-592805402248.asia-southeast1.run.app';
+  //https://riasec-app-592805402248.asia-southeast1.run.app
   const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwqeFFhHglKxD0ImsKfFOPN6KAbCM5wQcBqNpueBWNTxAfTflgxSInTfw2i0bOis_5S/exec';
 
   const QUESTION_MAP: Record<number, { A: string; B: string }> = {

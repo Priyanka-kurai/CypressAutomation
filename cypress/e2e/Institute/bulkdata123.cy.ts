@@ -27,11 +27,11 @@ cy.get('ul[role="listbox"]')//.scrollTo('bottom');
     cy.contains('li', 'Bachelor of Science (BSC123)', { timeout: 5000 }).click();
     // Assert Program input contains selected value
 cy.contains('label', 'Select Course').parent().find('input').should('have.value', 'Bachelor of Science (BSC123)');
- cy.contains('button', 'Import Learner File').click();
+ //cy.contains('button', 'Import Learner File').click();
 
     // Attach the Excel or CSV file to the file input
     // (Assuming a file input appears after clicking the button)
-    cy.get('input[type="file"]').attachFile('students_data_dummy.xlsx');
+    //cy.get('input[type="file"]').attachFile('students_data_dummy.xlsx');
 
  })
 

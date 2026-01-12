@@ -2,7 +2,7 @@
 
 describe('RIASEC Assessment: R Combinations with Google Sheets Logging', () => {
   const PAUSE = 600;
-  const APP_URL = 'https://job-recommendation-878524709646.asia-southeast1.run.app/';
+  const APP_URL = 'https://riasec-app-592805402248.asia-southeast1.run.app';
   
   // 🔑 GOOGLE SHEETS CONFIG
   // Get your Web App URL from Google Apps Script deployment
