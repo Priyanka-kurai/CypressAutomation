@@ -25,13 +25,9 @@ describe('Add New Batch Form Tests', () => {
   .clear()
   .type('Program for Travolic', { delay: 100 })
 
-cy.get('ul[role="listbox"] li').then($items => {
-  cy.wrap(
-    [...$items].find(el =>
-      el.innerText.includes('Program for Travolic (12)')
-    )
-  ).click()
-})
+cy.get('ul[role="listbox"]')
+  .contains('li', 'Program for Travolic (12)')
+  .click()
 cy.contains('label', 'Select Course')
       .parent()
       .find('.MuiAutocomplete-popupIndicator')
